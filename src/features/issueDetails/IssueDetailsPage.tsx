@@ -15,7 +15,7 @@ import './IssueDetailsPage.css'
 interface IDProps {
   org: string
   repo: string
-  issueId: number
+  issueId: number | null
   showIssuesList: () => void
 }
 
