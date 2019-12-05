@@ -1,8 +1,9 @@
-import {configureStore} from '@reduxjs/toolkit'
+import { configureStore, Action } from '@reduxjs/toolkit'
+import { ThunkAction } from 'redux-thunk';
 
-import rootReducer from './rootReducer'
+import rootReducer, { RootState } from './rootReducer'
 
-const store = configureStore({reducer: rootReducer})
+const store = configureStore({ reducer: rootReducer })
 
 
 /* By using the module.hot API for reloading, we can re-import 
@@ -17,4 +18,5 @@ if (process.env.NODE_ENV === 'development' && module.hot) {
 }
 
 export type AppDispatch = typeof store.dispatch
+export type AppThunk = ThunkAction<void, RootState, null, Action<string>> // these are most common settings for ThunkAction
 export default store

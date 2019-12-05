@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from './rootReducer';
 
@@ -9,15 +9,6 @@ import { IssuesListPage } from 'features/issuesList/IssuesListPage'
 import { IssueDetailsPage } from 'features/issueDetails/IssueDetailsPage'
 
 import { displayRepo, setCurrentDisplayType, setCurrentPage } from 'features/issuesDisplay/issuesDisplaySlice';
-
-type CurrentDisplay =
-  | {
-    type: 'issues'
-  }
-  | {
-    type: 'comments'
-    issueId: number
-  }
 
 const App: React.FC = () => {
   const dispatch = useDispatch()
@@ -62,6 +53,7 @@ const App: React.FC = () => {
       </React.Fragment>
     )
   } else {
+    // const { issueId } = currentDisplay
     const key = `${org}/${repo}/${issueId}`
     content = (
       <IssueDetailsPage

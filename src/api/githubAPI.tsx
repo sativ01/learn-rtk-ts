@@ -97,7 +97,7 @@ export async function getRepoDetails(org: string, repo: string) {
   return data
 }
 
-export async function getIssue(org: string, repo: string, number: number) {
+export async function getIssue(org: string, repo: string, number: number | null) {
   const url = `https://api.github.com/repos/${org}/${repo}/issues/${number}`
 
   const { data } = await axios.get<Issue>(url)

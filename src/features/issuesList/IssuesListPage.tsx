@@ -1,6 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux';
 
-import { getIssues, getRepoDetails, IssuesResult } from 'api/githubAPI'
+import { fetchIssuesCount } from 'features/repoSearch/repoDetailsSlice';
+import { fetchIssues } from './issuesSlice';
+
+import { RootState } from 'app/rootReducer'
 
 import { IssuesPageHeader } from './IssuesPageHeader'
 import { IssuesList } from './IssuesList'
@@ -21,61 +25,37 @@ export const IssuesListPage = ({
   setJumpToPage,
   showIssueComments
 }: ILProps) => {
-  const [issuesResult, setIssues] = useState<IssuesResult>({
-    pageLinks: null,
-    pageCount: 1,
-    issues: []
-  })
-  const [numIssues, setNumIssues] = useState<number>(-1)
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [issuesError, setIssuesError] = useState<Error | null>(null)
 
-  const { issues, pageCount } = issuesResult
+  const dispatch = useDispatch()
+  const openIssuesCount = useSelector(
+    (state: RootState) => state.repoDetails.openIssuesCount
+  )
+
+  const {
+    currentPageIssues,
+    pageCount,
+    error
+  } = useSelector((state: RootState) => state.issues)
 
   useEffect(() => {
-    async function fetchEverything() {
-      async function fetchIssues() {
-        const issuesResult = await getIssues(org, repo, page)
-        setIssues(issuesResult)
-      }
+    dispatch(fetchIssues(org, repo, page))
+    dispatch(fetchIssuesCount(org, repo))
+  }, [org, repo, page, dispatch])
 
-      async function fetchIssueCount() {
-        const repoDetails = await getRepoDetails(org, repo)
-        setNumIssues(repoDetails.open_issues_count)
-      }
-
-      try {
-        await Promise.all([fetchIssues(), fetchIssueCount()])
-        setIssuesError(null)
-      } catch (err) {
-        console.error(err)
-        setIssuesError(err)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    setIsLoading(true)
-
-    fetchEverything()
-  }, [org, repo, page])
-
-  if (issuesError) {
+  if (error) {
     return (
       <div>
         <h1>Something went wrong...</h1>
-        <div>{issuesError.toString()}</div>
+        <div>{error}</div>
       </div>
     )
   }
 
   const currentPage = Math.min(pageCount, Math.max(page, 1)) - 1
+  // const issues = currentPageIssues.map(issueNumber => issuesByNumber[issueNumber])
 
-  let renderedList = isLoading ? (
-    <h3>Loading...</h3>
-  ) : (
-    <IssuesList issues={issues} showIssueComments={showIssueComments} />
-  )
+  let renderedList =
+    <IssuesList issues={currentPageIssues} showIssueComments={showIssueComments} />
 
   const onPageChanged: OnPageChangeCallback = selectedItem => {
     const newPage = selectedItem.selected + 1
@@ -84,7 +64,7 @@ export const IssuesListPage = ({
 
   return (
     <div id="issue-list-page">
-      <IssuesPageHeader openIssuesCount={numIssues} org={org} repo={repo} />
+      <IssuesPageHeader openIssuesCount={openIssuesCount} org={org} repo={repo} />
       {renderedList}
       <IssuePagination
         currentPage={currentPage}
