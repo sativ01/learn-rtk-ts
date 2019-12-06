@@ -53,7 +53,6 @@ const App: React.FC = () => {
       </React.Fragment>
     )
   } else {
-    // const { issueId } = currentDisplay
     const key = `${org}/${repo}/${issueId}`
     content = (
       <IssueDetailsPage

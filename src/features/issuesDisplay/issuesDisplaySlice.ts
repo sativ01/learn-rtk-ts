@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface CurrentDisplay {
   displayType: 'issues' | 'comments'
-  issueId: number | null
+  issueId: number
 }
 
 interface CurrentDisplayPayload {
@@ -25,7 +25,7 @@ let initialState: CurrentDisplayState = {
   repo: 'rails',
   page: 1,
   displayType: 'issues',
-  issueId: null
+  issueId: 0
 }
 
 let issuesDisplaySlice = createSlice({
@@ -41,7 +41,7 @@ let issuesDisplaySlice = createSlice({
       state.page = action.payload
     },
     setCurrentDisplayType(state, action: PayloadAction<CurrentDisplayPayload>) {
-      const { displayType, issueId = null } = action.payload
+      const { displayType, issueId = 0 } = action.payload
       state.displayType = displayType
       state.issueId = issueId
     }
