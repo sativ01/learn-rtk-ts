@@ -15,7 +15,7 @@ interface ILProps {
   repo: string
   page: number
   setJumpToPage: (page: number) => void
-  showIssueComments: (issueId: number) => void
+  showIssueComments: (issueId: string) => void
 }
 
 export const IssuesListPage = ({

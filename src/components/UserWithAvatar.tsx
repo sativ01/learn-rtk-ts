@@ -1,7 +1,8 @@
 import React from 'react'
 import classnames from 'classnames'
 
-import { User } from 'api/githubAPI'
+import { User } from 'graphql'
+// import { User } from 'api/githubAPI'
 import styles from './UserWithAvatar.module.css'
 
 interface UserAvatarProps {
@@ -27,7 +28,7 @@ export const UserWithAvatar = ({
 
   const contents = (
     <React.Fragment>
-      <img className={avatarClassnames} src={user.avatar_url} alt="" />
+      <img className={avatarClassnames} src={user.avatarUrl} alt="" />
       <div className={usernameClassnames}>{user.login}</div>
     </React.Fragment>
   )

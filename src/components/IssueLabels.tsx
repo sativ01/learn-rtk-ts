@@ -1,7 +1,8 @@
 import React from 'react'
 import classnames from 'classnames'
 
-import { Label } from 'api/githubAPI'
+import { Label } from 'graphql'
+// import { Label } from 'api/githubAPI'
 
 interface IssueLabelsProps {
   labels: Label[]

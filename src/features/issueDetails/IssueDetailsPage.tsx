@@ -18,22 +18,18 @@ import styles from './IssueDetailsPage.module.css'
 import './IssueDetailsPage.css'
 
 interface IDProps {
-  org: string
-  repo: string
-  issueId: number
+  issueId: string
   showIssuesList: () => void
 }
 
 export const IssueDetailsPage = ({
-  org,
-  repo,
   issueId,
   showIssuesList
 }: IDProps) => {
 
   const dispatch = useDispatch()
   const issue = useSelector(
-    (state: RootState) => state.issues.issuesByNumber[issueId]
+    (state: RootState) => state.issues.issuesById[issueId]
   )
   const { comments, commentsLoading, commentsError } = useSelector(
     (state: RootState) => {
@@ -47,11 +43,11 @@ export const IssueDetailsPage = ({
   )
 
   useEffect(() => {
-    dispatch(fetchIssue(org, repo, issueId))
-  }, [org, repo, issueId, dispatch])
+    dispatch(fetchIssue(issueId))
+  }, [issueId, dispatch])
 
   useEffect(() => {
-    if(issue) dispatch(fetchComments(issue.comments_url))
+    if(issue) dispatch(fetchComments(issue.id))
   }, [issue, dispatch])
 
   let content
@@ -80,14 +76,14 @@ export const IssueDetailsPage = ({
       </div>
     )
   } else {
-    let renderedComments = <IssueComments issue={issue} comments={comments} />
+    // let renderedComments = <IssueComments comments={comments} />
 
     content = (
       <div className={classnames('issueDetailsPage', styles.issueDetailsPage)}>
         <h1 className="issue-detail__title">{issue.title}</h1>
         {backToIssueListButton}
         <IssueMeta issue={issue} />
-        <IssueLabels labels={issue.labels} className={styles.issueLabels} />
+        {/* <IssueLabels labels={issue.labels.nodes} className={styles.issueLabels} /> */}
         <hr className={styles.divider} />
         <div className={styles.summary}>
           <ReactMarkdown
@@ -96,7 +92,7 @@ export const IssueDetailsPage = ({
           />
         </div>
         <hr className={styles.divider} />
-        <ul>{renderedComments}</ul>
+        {/* <ul>{renderedComments}</ul> */}
       </div>
     )
   }

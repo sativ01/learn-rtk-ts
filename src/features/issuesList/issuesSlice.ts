@@ -1,23 +1,23 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Links } from 'parse-link-header';
+// import { Links } from 'parse-link-header';
 
-import { Issue, IssuesResult, getIssue, getIssues } from 'api/githubAPI';
+import { Issue, IssuesResult, getIssue, getIssues } from '../../graphql';
 import { AppThunk } from 'app/store';
 
 interface IssuesState {
-  issuesByNumber: Record<number, Issue>
+  issuesById: Record<string, Issue>
   currentPageIssues: Issue[]
   pageCount: number
-  pageLinks: Links | null
+  // pageLinks: Links | null
   isLoading: boolean
   error: string | null
 }
 
 const issuesInitialState: IssuesState = {
-  issuesByNumber: {},
+  issuesById: {},
   currentPageIssues: [],
   pageCount: 0,
-  pageLinks: {},
+  // pageLinks: {},
   isLoading: false,
   error: null
 }
@@ -38,20 +38,19 @@ const issues = createSlice({
     getIssueStart: startLoading,
     getIssuesStart: startLoading,
     getIssueSuccess(state, { payload }: PayloadAction<Issue>) {
-      const { number } = payload
-      state.issuesByNumber[number] = payload
+      const { id } = payload
+      state.issuesById[id] = payload
       state.isLoading = false
       state.error = null
     },
     getIssuesSuccess(state, { payload }: PayloadAction<IssuesResult>) {
-      const { pageCount, issues, pageLinks } = payload
-      state.pageCount = pageCount
-      state.pageLinks = pageLinks
+      const { issues } = payload
+      state.pageCount = Math.round(issues.totalCount / 25)
       state.isLoading = false
       state.error = null
 
-      state.issuesByNumber = issues.reduce((acc, issue) => ({ acc, ...{ [issue.number]: issue } }), {})
-      state.currentPageIssues = issues
+      state.issuesById = issues.nodes.reduce((acc, issue) => ({ acc, ...{ [issue.id]: issue } }), {})
+      state.currentPageIssues = issues.nodes
     },
     getIssueFailure: loadingFailed,
     getIssuesFailure: loadingFailed,
@@ -80,11 +79,11 @@ export const fetchIssues = (org:string, repo:string, page?:number): AppThunk =>
     }
   }
 
-export const fetchIssue = (org: string, repo: string, number: number): AppThunk =>
+export const fetchIssue = (id: string): AppThunk =>
   async dispatch => {
     try {
       dispatch(getIssueStart())
-      const issue = await(getIssue(org, repo, number))
+      const issue = await(getIssue(id))
       dispatch(getIssueSuccess(issue))
     } catch (err) {
       dispatch(getIssueFailure(err.toString()))

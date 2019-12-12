@@ -25,10 +25,10 @@ const App: React.FC = () => {
   }
 
   const showIssuesList = () => {
-    dispatch(setCurrentDisplayType({ displayType: 'issues' }))
+    dispatch(setCurrentDisplayType({ displayType: 'issues', issueId: '' }))
   }
 
-  const showIssueComments = (issueId: number) => {
+  const showIssueComments = (issueId: string) => {
     dispatch(setCurrentDisplayType({ displayType: 'comments', issueId }))
   }
 
@@ -57,8 +57,6 @@ const App: React.FC = () => {
     content = (
       <IssueDetailsPage
         key={key}
-        org={org}
-        repo={repo}
         issueId={issueId}
         showIssuesList={showIssuesList}
       />

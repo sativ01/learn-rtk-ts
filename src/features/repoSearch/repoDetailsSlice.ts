@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppThunk } from 'app/store';
-import { RepoDetails, getRepoDetails } from 'api/githubAPI';
-
+import { RepoDetails, getRepoDetails } from '../../graphql';
+// import { RepoDetails, getRepoDetails } from 'api/githubAPI';
 
 interface RepoDetailsState {
   openIssuesCount: number
@@ -18,7 +18,7 @@ const repoDetails = createSlice({
   initialState,
   reducers: {
     getRepoDetailsSuccess(state, action: PayloadAction<RepoDetails>) {
-      state.openIssuesCount = action.payload.open_issues_count
+      state.openIssuesCount = action.payload.repository.issues.totalCount
       state.error = null
     },
     getRepoDetailsFailed(state, action: PayloadAction<string>) {

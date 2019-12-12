@@ -6,7 +6,6 @@ import { gql } from 'apollo-boost'
 // import { Links, Link } from 'parse-link-header';
 
 import * as q from './githubQueries'
-import { AnyRecord } from 'dns';
 
 export interface User {
   login: string
@@ -20,10 +19,14 @@ export interface Label {
 }
 
 export interface RepoDetails {
-  id: number
-  name: string
-  full_name: string
-  open_issues_count: number
+  repository: {
+    id: number
+    name: string
+    nameWithOwner: string
+    issues:{
+      totalCount: number
+    }
+  }
 }
 
 export interface IssuesResult {
@@ -57,7 +60,7 @@ export interface Issue {
     nodes: Comment[]
   }
   labels: {
-    nodes: Label[] | null
+    nodes: Label[]
   }
 }
 
@@ -91,12 +94,11 @@ export async function query(gqlString: string, variables: Object = {}): Promise<
 
 export async function getIssues(org: string, repo: string, page = 1): Promise<IssuesResult> {
   const perPage = 25
-  const response = await query(q.GET_ISSUES, { org, repo, perPage })
-  const errors = response.errors
+  const {data, errors} = await query(q.GET_ISSUES, { org, repo, perPage })
 
   if (errors) throw new Error(errors.toString())
 
-  return response.data.repository
+  return data.repository
 }
 
 
@@ -109,12 +111,17 @@ export interface Comment {
 }
 
 export async function getIssue(id: string): Promise<Issue> {
-  const response = await query(q.GET_ISSUE, { id })
-  return response.data.node
+  const {data} = await query(q.GET_ISSUE, { id })
+  return data.node
 }
 
 export async function getComments(issueId: string): Promise<Comment[]>{
-  const {data}: ApolloQueryResult<Issue> = await query(q.GET_ISSUE, { id: issueId })
-  return data.comments.nodes
+  const {data} = await query(q.GET_ISSUE_COMMENTS, { id: issueId })
+  return data.node.comments
+}
+
+export async function getRepoDetails(org: string, repo: string): Promise<RepoDetails> {
+  const {data}: ApolloQueryResult<RepoDetails> = await query(q.GET_REPO_DETAILS, { org, repo})
+  return data
 }
 

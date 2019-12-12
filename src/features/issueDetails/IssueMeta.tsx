@@ -1,7 +1,8 @@
 import React from 'react'
 import classnames from 'classnames'
 
-import { Issue } from 'api/githubAPI'
+import { Issue } from 'graphql'
+// import { Issue } from 'api/githubAPI'
 import { UserWithAvatar } from 'components/UserWithAvatar'
 
 import styles from './IssueMeta.module.css'
@@ -31,7 +32,7 @@ export const IssueMeta = ({ issue }: IssueProps) => {
     <div className={classnames('issue-detail__meta', styles.meta)}>
       <IssueNumber issue={issue} />
       <IssueState issue={issue} />
-      <UserWithAvatar user={issue.user} orientation="horizontal" />
+      <UserWithAvatar user={issue.author} orientation="horizontal" />
     </div>
   )
 }

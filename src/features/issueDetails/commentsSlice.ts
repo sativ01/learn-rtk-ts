@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { Comment, getComments } from 'api/githubAPI';
+import { Comment, getComments } from '../../graphql';
+// import { Comment, getComments } from 'api/githubAPI';
 import { AppThunk } from 'app/store';
 
 interface CommentsState {
@@ -46,11 +47,11 @@ export const {
 
 export default comments.reducer
 
-export const fetchComments = (url:string): AppThunk =>
+export const fetchComments = (issueId:string): AppThunk =>
   async dispatch => {
     try {
       dispatch(getCommentsStart())
-      const comments = await getComments(url)
+      const comments = await getComments(issueId)
       dispatch(getCommentsSuccess(comments))
     } catch (err) {
       dispatch(getCommentsFailure(err.toString()))

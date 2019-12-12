@@ -1,13 +1,14 @@
 import React from 'react'
 
-import { Issue } from 'api/githubAPI'
+import { Issue } from 'graphql'
+// import { Issue } from 'api/githubAPI'
 import { IssueListItem } from './IssueListItem'
 
 import styles from './IssuesList.module.css'
 
 interface Props {
   issues: Issue[]
-  showIssueComments: (issueId: number) => void
+  showIssueComments: (issueId: string) => void
 }
 
 export const IssuesList = ({ issues, showIssueComments }: Props) => {

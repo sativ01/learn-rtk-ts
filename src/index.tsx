@@ -6,8 +6,6 @@ import store from './app/store'
 
 import './index.css'
 
-import { getIssues, getIssue } from './graphql/index'
-
 const render = async () => {
 
   const App = require('./app/App').default

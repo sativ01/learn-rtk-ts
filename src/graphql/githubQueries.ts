@@ -1,10 +1,15 @@
 // graphql
-const BASE = `
-query {
-  viewer {
-    login
+const GET_REPO_DETAILS = `
+  query($org: String!, $repo: String!) {
+    repository(owner: $org, name: $repo){
+      id
+      name
+      nameWithOwner
+      issues(first: 0){
+        totalCount
+      }
+    }
   }
-}
 `
 
 const GET_ISSUES = `
@@ -50,6 +55,12 @@ const GET_ISSUE = `
   query ($id: ID!) {
     node(id: $id) {
       ... on Issue {
+        id
+        title
+        body
+        state
+        updatedAt
+        createdAt
         author {
           login
           avatarUrl(size: 128)
@@ -67,15 +78,37 @@ const GET_ISSUE = `
             updatedAt
           }
         }
-        state
-        updatedAt
+      }
+    }
+  }
+`
+
+const GET_ISSUE_COMMENTS = `
+  query ($id: ID!) {
+    node(id: $id) {
+      ... on Issue {
+        id
+        comments(first: 100) {
+          totalCount
+          nodes {
+            id
+            author {
+              login
+              avatarUrl(size: 128)
+            }
+            body
+            createdAt
+            updatedAt
+          }
+        }
       }
     }
   }
 `
 
 export { 
-  BASE,
-  GET_ISSUE,
+  GET_REPO_DETAILS,
   GET_ISSUES,
+  GET_ISSUE,
+  GET_ISSUE_COMMENTS,
 }
