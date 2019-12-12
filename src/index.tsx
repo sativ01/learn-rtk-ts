@@ -6,12 +6,15 @@ import store from './app/store'
 
 import './index.css'
 
-const render = () => {
+import { getIssues, getIssue } from './graphql/index'
+
+const render = async () => {
+
   const App = require('./app/App').default
 
   ReactDOM.render(
     <Provider store={store}>
-      <App/>
+      <App />
     </Provider>, document.getElementById('root')
   )
 }
